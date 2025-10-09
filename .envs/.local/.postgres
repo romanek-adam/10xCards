@@ -1,0 +1,7 @@
+# PostgreSQL
+# ------------------------------------------------------------------------------
+POSTGRES_HOST=postgres
+POSTGRES_PORT=5432
+POSTGRES_DB=flashcards
+POSTGRES_USER=iASGOOkWojHUkKWISPPswSZdnbTUjTfG
+POSTGRES_PASSWORD=MuzBfFKatbUhPNIdiqxghgpGhRjykp6FWpFDId8Zd0M84k6KoUjN9BeH9v5bnYuF
