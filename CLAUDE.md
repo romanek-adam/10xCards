@@ -160,7 +160,9 @@ The MVP focuses on three core views:
 
 - When running in agent mode, execute up to 3 actions at a time and ask for approval or course correction afterwards.
 - Write code with clear variable names and include explanatory comments for non-obvious logic. Avoid shorthand syntax and complex patterns.
-- Provide full implementations rather than partial snippets. Include import statements, required dependencies, and initialization code.
+- Handle errors and edge cases at the beginning of functions.
+- Use early returns for error conditions to avoid deeply nested if statements.
+- Place the happy path last in the function for improved readability.
 - Add defensive coding patterns and clear error handling.
 - Include validation for user inputs and explicit type checking.
 - Suggest simpler solutions first, then offer more optimized versions with explanations of the trade-offs.
@@ -197,6 +199,40 @@ The MVP focuses on three core views:
 - Use multi-stage builds to create smaller production images
 - Implement layer caching strategies to speed up builds
 - Use non-root users in containers for better security
+
+### HTMX
+
+- Use semantic HTTP verbs - Match `hx-get`, `hx-post`, `hx-put`, `hx-delete` to Django view logic and RESTful conventions. POST for mutations, GET for retrievals.
+- Target specific page regions - Use `hx-target` with CSS selectors to update only the necessary DOM sections, avoiding full page reloads. Common pattern: `hx-target="#content-area"`.
+- Choose appropriate swap strategies - Use `hx-swap` values strategically:
+  - `innerHTML` (default) for replacing content
+  - `outerHTML` for replacing the element itself
+  - `beforeend`/`afterbegin` for appending to lists
+  - `none` when only triggering side effects
+- Control request timing - Use `hx-trigger` modifiers for better UX:
+  - `changed delay:500ms` for search inputs to debounce
+  - `load` for loading content on page load
+  - `revealed` for infinite scroll patterns
+  - `every 10s` for polling updates
+- Provide loading feedback - Use `hx-indicator` with CSS classes to show spinners/loading states during requests. Pair with Bootstrap spinner components.
+- Return HTML fragments from Django views - Server responses should return partial templates (e.g., `_card_list.html`), not full pages. Use Django's `render()` with fragment templates.
+- Leverage out-of-band swaps - Use `hx-swap-oob="true"` in responses to update multiple page sections simultaneously (e.g., update flash messages + content in one response).
+- Handle errors gracefully - Implement `htmx:responseError` event listeners or use `hx-target-error` to display user-friendly error messages. Return appropriate HTTP status codes from Django.
+- Send additional data cleanly - Use `hx-vals='{"key": "value"}'` for static data or `hx-include` to include other form inputs. Access in Django views via `request.POST` or `request.GET`.
+- Progressive enhancement with hx-boost - Add `hx-boost="true"` to containers with regular links to convert them to AJAX requests automatically, gracefully degrading without JavaScript.
+
+### Bootstrap
+
+- Maximize utility classes - Use Bootstrap's extensive utility classes (e.g., `text-center`, `d-flex`, `align-items-center`) instead of writing custom CSS. Keeps styling consistent and maintainable.
+- Use the grid system properly - Always wrap columns in `.row`, rows in `.container` or `.container-fluid`. Use responsive column classes: `col-12 col-md-6 col-lg-4` for mobile-first layouts.
+- Leverage Bootstrap components - Use built-in components (Cards, Modals, Alerts, Badges) consistently throughout the app. Import component-specific templates for reusability (e.g., `_alert.html`).
+- Implement form validation classes - Use `.is-valid` and `.is-invalid` classes with `.valid-feedback`/`.invalid-feedback` for Django form errors. Integrate with Django forms' `{{ form.field.errors }}`.
+- Apply spacing utilities consistently - Use spacing scale (`m-0` to `m-5`, `p-0` to `p-5`) for margins and paddings. Avoid arbitrary spacing values. Use `mt-`, `mb-`, `mx-`, `my-` for directional spacing.
+- Design mobile-first with breakpoints - Start with mobile layout, then add responsive classes for larger screens. Use `d-none d-md-block` patterns to show/hide elements by screen size.
+- Use semantic color utilities - Apply contextual classes (`text-primary`, `bg-success`, `btn-danger`, `alert-warning`) that align with Bootstrap's color system. Avoid hardcoded hex colors.
+- Ensure accessibility - Bootstrap components include ARIA attributes by default. Maintain them when customizing. Use `.visually-hidden` for screen-reader-only text, not `display: none`.
+- Minimize custom CSS - Extend Bootstrap with CSS custom properties (variables) rather than overriding classes. Keep custom styles in a separate file and document why Bootstrap utilities weren't sufficient.
+- Avoid Bootstrap JS when HTMX suffices - For interactive components (modals, tabs, accordions), prefer HTMX-driven server-side rendering over Bootstrap's JavaScript. Only use Bootstrap JS for purely client-side UI (tooltips, popovers).
 
 ## TESTING
 
