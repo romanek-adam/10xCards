@@ -152,3 +152,76 @@ The MVP focuses on three core views:
 - Migrations and staticfiles excluded from linting
 - djLint for template formatting (Django profile, Bootstrap 5)
 - mypy type checking with django-stubs plugin
+
+
+## CODING_PRACTICES
+
+### General
+
+- When running in agent mode, execute up to 3 actions at a time and ask for approval or course correction afterwards.
+- Write code with clear variable names and include explanatory comments for non-obvious logic. Avoid shorthand syntax and complex patterns.
+- Provide full implementations rather than partial snippets. Include import statements, required dependencies, and initialization code.
+- Add defensive coding patterns and clear error handling.
+- Include validation for user inputs and explicit type checking.
+- Suggest simpler solutions first, then offer more optimized versions with explanations of the trade-offs.
+- Briefly explain why certain approaches are used and link to relevant documentation or learning resources.
+- When suggesting fixes for errors, explain the root cause and how the solution addresses it to build understanding. Ask for confirmation before proceeding.
+- Offer introducing basic test cases that demonstrate how the code works and common edge cases to consider.
+
+
+### Documentation
+
+- Update relevant documentation in /docs when modifying features
+- Keep README.md in sync with new capabilities
+- Maintain a log of what, why and how you did what you did in CHANGELOG.md
+
+
+### Git
+
+- Use conventional commits to create meaningful commit messages
+- Use feature branches with descriptive names
+- Write meaningful commit messages that primarily explain why changes were made, not just what
+- Keep commits focused on single logical changes to facilitate code review and bisection
+
+### Django
+
+- Use class-based views instead of function-based views for more maintainable and reusable code components
+- Leverage Django REST Framework for building APIs with serializers that enforce data validation
+- Use Django ORM query expressions and annotations for complex database queries involving
+- Leverage Django signals sparingly and document their usage to avoid hidden side effects in the application flow
+- Implement custom model managers for encapsulating complex query logic rather than repeating queries across views
+- Use Django forms or serializers for all user input to ensure proper validation and prevent security vulnerabilities
+
+### Docker
+
+- Use multi-stage builds to create smaller production images
+- Implement layer caching strategies to speed up builds
+- Use non-root users in containers for better security
+
+## TESTING
+
+### Guidelines for UNIT
+
+#### PYTEST
+
+- Use fixtures for test setup and dependency injection
+- Implement parameterized tests for testing multiple inputs
+- Use `pytest-mock`'s `mocker` fixture for mocking dependencies
+- Use `pytest-responses` for mocking HTTP responses
+
+
+### Guidelines for E2E
+
+#### PLAYWRIGHT
+
+- Initialize configuration only with Chromium/Desktop Chrome browser
+- Use browser contexts for isolating test environments
+- Implement the Page Object Model for maintainable tests
+- Use locators for resilient element selection
+- Leverage API testing for backend validation
+- Implement visual comparison with expect(page).toHaveScreenshot()
+- Use the codegen tool for test recording
+- Leverage trace viewer for debugging test failures
+- Implement test hooks for setup and teardown
+- Use expect assertions with specific matchers
+- Leverage parallel execution for faster test runs
