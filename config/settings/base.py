@@ -1,7 +1,6 @@
 # ruff: noqa: ERA001, E501
 """Base settings to build other settings files upon."""
 
-
 from pathlib import Path
 
 import environ
@@ -88,6 +87,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "flashcards.users",
+    "flashcards.core",
     # Your stuff: custom apps go here
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
