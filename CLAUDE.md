@@ -88,6 +88,7 @@ uv run djlint flashcards/templates
 
 ### Project Structure
 - `flashcards/` - Main Django app directory
+  - `core/` - Core flashcard app with main models (Flashcard, AIGenerationSession, GeneratedFlashcard)
   - `users/` - Custom user app with django-allauth integration
   - `contrib/` - Contributed apps (e.g., custom sites migrations)
   - `static/` - Static files (CSS, JS)
