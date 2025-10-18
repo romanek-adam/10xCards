@@ -7,7 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 10xCards is a Django-based educational flashcard application that uses AI to generate flashcards from student input text, combined with spaced repetition algorithms. Built with django-cookiecutter template.
 
 **Tech Stack:**
-- Backend: Django 5.2 with Python 3.13
+- Python: 3.13
+- Backend: Django 5.2 / Django REST Framework 3.16
 - Frontend: HTMX + Bootstrap (minimal JavaScript)
 - Database: PostgreSQL 17
 - AI: OpenRouter API for LLM-powered flashcard generation

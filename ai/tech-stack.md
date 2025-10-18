@@ -5,6 +5,7 @@ Frontend:
 
 Backend:
 - Django 5.2
+- Django REST Framework 3.16
 
 Database:
 - Postgres 17

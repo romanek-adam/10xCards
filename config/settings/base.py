@@ -83,6 +83,8 @@ THIRD_PARTY_APPS = [
     "allauth.account",
     "allauth.mfa",
     "allauth.socialaccount",
+    "rest_framework",
+    "rest_framework.authtoken",  # mainly for CLI-based testing purposes
 ]
 
 LOCAL_APPS = [
@@ -287,6 +289,18 @@ SOCIALACCOUNT_ADAPTER = "flashcards.users.adapters.SocialAccountAdapter"
 # https://docs.allauth.org/en/latest/socialaccount/configuration.html
 SOCIALACCOUNT_FORMS = {"signup": "flashcards.users.forms.UserSocialSignupForm"}
 
+
+# DRF
+# ------------------------------------------------------------------------------
+REST_FRAMEWORK = {
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 25,
+    "ORDERING_PARAM": "order",
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+}
 
 # Your stuff...
 # ------------------------------------------------------------------------------
