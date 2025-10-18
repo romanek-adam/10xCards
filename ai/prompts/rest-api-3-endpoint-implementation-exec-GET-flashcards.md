@@ -3,16 +3,12 @@ Your task is to implement a REST API endpoint based on the provided implementati
 First, carefully review the provided implementation plan:
 
 <implementation_plan>
-{{endpoint-implementation-plan}} <- add reference to endpoint implementation plan (e.g., @generations-endpoint-implementation-plan.md)
+@ai/rest-api-endpoint-implementation-plan-GET-flashcards.md
 </implementation_plan>
 
-<types>
-{{types}} <- add reference to type definitions (e.g., @types)
-</types>
-
-<implementation_rules>
-{{backend-rules}} <- add reference to backend rules (e.g., @shared.mdc, @backend.mdc, @astro.mdc)
-</implementation_rules>
+<models>
+@flashcards/core/models.py
+</models>
 
 <implementation_approach>
 Implement a maximum of 3 steps from the implementation plan, briefly summarize what you've done, and describe the plan for the next 3 actions - stop work at this point and wait for my feedback.
@@ -41,10 +37,6 @@ Now perform the following steps to implement the REST API endpoint:
    - Use appropriate HTTP status codes for different scenarios (e.g., 400 for bad requests, 404 for not found, 500 for server errors).
    - Provide clear and informative error messages in responses.
    - Handle potential exceptions that may occur during processing.
-
-4. Testing considerations:
-   - Consider edge cases and potential issues that should be tested.
-   - Ensure the implementation covers all scenarios mentioned in the plan.
 
 5. Documentation:
    - Add clear comments to explain complex logic or important decisions

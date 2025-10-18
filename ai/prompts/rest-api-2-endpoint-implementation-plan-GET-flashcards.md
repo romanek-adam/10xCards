@@ -106,7 +106,7 @@ The final output should be a well-organized implementation plan in Markdown form
 [Expected response structure and status codes]
 
 ## 4. Data Flow
-[Description of data flow, including interactions with external services or databases]
+[Description of data flow, including ORM calls and/or interactions with external services]
 
 ## 5. Security Considerations
 [Authentication, authorization, and data validation details]
@@ -126,4 +126,4 @@ The final output should be a well-organized implementation plan in Markdown form
 
 The final output should consist solely of the implementation plan in markdown format and should not duplicate or repeat any work done in the analysis section.
 
-Remember to save your implementation plan as ai/view-implementation-plan.md. Ensure the plan is detailed, clear, and provides comprehensive guidance for the development team.
+Remember to save your implementation plan as ai/rest-api-endpoint-implementation-plan.md. Ensure the plan is detailed, clear, and provides comprehensive guidance for the development team.

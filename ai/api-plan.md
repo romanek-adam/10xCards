@@ -366,7 +366,7 @@ None
 
 **Session-Based Authentication**
 
-- Use Django REST Framework's `SessionAuthentication` class
+- Use Django REST Framework's `SessionAuthentication` class (the default in the project - no need to configure in each view)
 - Leverages Django's default session framework for maintaining authentication state
 
 ### 3.2 Authentication Flow
@@ -415,6 +415,11 @@ None
 **XSS Prevention:**
 - API returns JSON only (not HTML)
 - Frontend responsible for sanitizing user-generated content before display
+
+### 3.5 Additional notes
+
+**Token (JWT) support:**
+- DO NOT add any JWT support
 
 ---
 
