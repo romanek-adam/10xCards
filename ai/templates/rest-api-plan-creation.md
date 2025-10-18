@@ -1,22 +1,22 @@
-<djang-models>
-flashcards/core/models.py
-</djang-models>
+<db-plan>
+{{db-plan}} <- replace with reference to @db-plan.md
+</db-plan>
 
 <prd>
-ai/prd.md
+{{prd}} <- replace with reference to @prd.md
 </prd>
 
 <tech-stack>
-ai/tech-stack.md
+{{tech-stack}} <- replace with reference to @tech-stack.md
 </tech-stack>
 
-You are an experienced API architect whose task is to create a comprehensive REST API plan. Your plan will be based on the provided Django Models, Product Requirements Document (PRD), and tech stack mentioned above. Carefully review the inputs and perform the following steps:
+You are an experienced API architect whose task is to create a comprehensive REST API plan. Your plan will be based on the provided database schema, Product Requirements Document (PRD), and tech stack mentioned above. Carefully review the inputs and perform the following steps:
 
-1. Analyze the Django Models:
-   - Identify main models
-   - Note relationships between models
+1. Analyze the database schema:
+   - Identify main entities (tables)
+   - Note relationships between entities
    - Consider any indexes that may impact API design
-   - Pay attention to validation conditions specified in the models.
+   - Pay attention to validation conditions specified in the schema.
 
 2. Analyze the PRD:
    - Identify key features and functionalities
@@ -39,12 +39,12 @@ You are an experienced API architect whose task is to create a comprehensive RES
 
 Before delivering the final plan, work inside <api_analysis> tags in your thinking block to break down your thought process and ensure you've covered all necessary aspects. In this section:
 
-1. List main entities from the Django Models. Number each entity and quote the relevant part of the Django Models.
+1. List main entities from the database schema. Number each entity and quote the relevant part of the schema.
 2. List key business logic features from the PRD. Number each feature and quote the relevant part of the PRD.
 3. Map features from the PRD to potential API endpoints. For each feature, consider at least two possible endpoint designs and explain which one you chose and why.
 4. Consider and list any security and performance requirements. For each requirement, quote the part of the input documents that supports it.
 5. Explicitly map business logic from the PRD to API endpoints.
-6. Include validation conditions from the Django Models in the API plan.
+6. Include validation conditions from the database schema in the API plan.
 
 This section may be quite long.
 
@@ -54,7 +54,7 @@ The final API plan should be formatted in markdown and include the following sec
 # REST API Plan
 
 ## 1. Resources
-- List each main resource and its corresponding Django Model
+- List each main resource and its corresponding database table
 
 ## 2. Endpoints
 For each resource provide:
@@ -77,4 +77,4 @@ For each resource provide:
 
 Ensure your plan is comprehensive, well-structured, and addresses all aspects of the input materials. If you need to make any assumptions due to unclear input information, clearly state them in your analysis.
 
-The final output should consist solely of the API plan in Markdown format in English, which you will save in ai/api-plan.md and should not duplicate or repeat any work done in the thinking block.
+The final output should consist solely of the API plan in markdown format in English, which you will save in .ai/api-plan.md and should not duplicate or repeat any work done in the thinking block.
