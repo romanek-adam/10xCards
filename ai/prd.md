@@ -367,5 +367,3 @@ The following mechanisms will be implemented to measure success metrics:
 2. Reporting Capability:
    - Calculate AI acceptance rate: (Accepted cards / Total generated cards) × 100
    - Calculate AI usage rate: (AI-generated cards / Total cards) × 100
-
-
