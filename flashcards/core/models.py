@@ -111,8 +111,7 @@ class Flashcard(models.Model):
 class AIGenerationSession(models.Model):
     """Tracks each AI generation attempt for analytics and debugging.
 
-    Stores input text, status, error information, and performance metrics
-    to support success metrics calculation and troubleshooting.
+    Stores input text, model and error information to support troubleshooting.
     """
 
     # Fields

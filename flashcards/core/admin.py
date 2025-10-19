@@ -113,8 +113,8 @@ class AIGenerationSessionAdmin(admin.ModelAdmin):
         "user_email",
         "input_preview",
         "generated_count",
-        "accepted_count",
-        "acceptance_rate_display",
+        "model",
+        "error_code",
         "api_response_time_ms",
         "created_at",
     )
@@ -124,12 +124,7 @@ class AIGenerationSessionAdmin(admin.ModelAdmin):
         "input_text",
         "error_message",
     )
-    readonly_fields = (
-        "created_at",
-        "acceptance_rate_display",
-        "generated_count",
-        "accepted_count",
-    )
+    readonly_fields = ("created_at",)
     fieldsets = (
         (
             "Session Info",
@@ -163,14 +158,12 @@ class AIGenerationSessionAdmin(admin.ModelAdmin):
             },
         ),
         (
-            "Metrics",
+            "Generation Results",
             {
                 "fields": (
+                    "model",
                     "generated_count",
-                    "accepted_count",
-                    "acceptance_rate_display",
                 ),
-                "classes": ("collapse",),
             },
         ),
     )

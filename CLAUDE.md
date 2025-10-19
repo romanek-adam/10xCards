@@ -161,7 +161,9 @@ The MVP focuses on three core views:
 ### General
 
 - When running in agent mode, execute up to 3 actions at a time and ask for approval or course correction afterwards.
-- Write code with clear variable names and include explanatory comments for non-obvious logic. Avoid shorthand syntax and complex patterns.
+- Write code with clear variable names
+- ONLY include explanatory comments for non-obvious logic.
+- Avoid shorthand syntax and complex patterns.
 - Handle errors and edge cases at the beginning of functions.
 - Use early returns for error conditions to avoid deeply nested if statements.
 - Place the happy path last in the function for improved readability.
@@ -172,6 +174,11 @@ The MVP focuses on three core views:
 - When suggesting fixes for errors, explain the root cause and how the solution addresses it to build understanding. Ask for confirmation before proceeding.
 - Offer introducing basic test cases that demonstrate how the code works and common edge cases to consider.
 
+
+### Logging
+
+- Use lazy `%` formatting instead of f-strings
+- Use `logger.exception(...)` instead of `logger.error(..., exc_info=True)`
 
 ### Documentation
 
@@ -195,6 +202,10 @@ The MVP focuses on three core views:
 - Leverage Django signals sparingly and document their usage to avoid hidden side effects in the application flow
 - Implement custom model managers for encapsulating complex query logic rather than repeating queries across views
 - Use Django forms or serializers for all user input to ensure proper validation and prevent security vulnerabilities
+
+### Django REST Framework
+
+- Prefer `serializer.is_valid(raise_exception=True)` over manual handling of validation errors found by serializers
 
 ### Docker
 

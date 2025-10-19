@@ -37,6 +37,7 @@ class FlashcardListView(generics.ListAPIView):
     GET /api/flashcards?page=2&page_size=25&sort=-created_at
 
     **Example Response (200 OK):**
+    ```json
     {
       "count": 150,
       "next": "http://localhost:8000/api/flashcards?page=3",
@@ -53,6 +54,7 @@ class FlashcardListView(generics.ListAPIView):
         ...
       ]
     }
+    ```
     """
 
     serializer_class = FlashcardSerializer
