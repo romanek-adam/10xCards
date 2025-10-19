@@ -17,6 +17,10 @@ from flashcards.core.models import AIGenerationSession
 User = get_user_model()
 logger = logging.getLogger(__name__)
 
+# Validation constants for flashcard fields
+MAX_FRONT_LENGTH = 200
+MAX_BACK_LENGTH = 500
+
 
 class GenerateFlashcardsError(Exception):
     pass
@@ -44,10 +48,12 @@ class GenerationResult:
     Attributes:
         session_id: ID of the AIGenerationSession record
         generated_count: Number of flashcards successfully generated
-        flashcards: List of generated flashcard dictionaries with 'front' and 'back' keys
+        flashcards: List of generated flashcard dictionaries with 'front'
+            and 'back' keys
         success: Whether generation succeeded
         error_code: Error code if generation failed (optional)
-        error_message: User-friendly error message if generation failed (optional)
+        error_message: User-friendly error message if generation failed
+            (optional)
         api_response_time_ms: API response time in milliseconds (optional)
     """
 
@@ -86,7 +92,8 @@ class FlashcardGenerationService:
         5. Returns a GenerationResult object
 
         Args:
-            command: GenerateFlashcardsCommand containing user, input_text, and model_name
+            command: GenerateFlashcardsCommand containing user, input_text,
+                and model_name
 
         Returns:
             GenerationResult with success status, flashcards, and session_id
@@ -103,7 +110,8 @@ class FlashcardGenerationService:
             # Track API response time
             start_time = time.time()
 
-            # Generate flashcards using mock service (replace with real API in production)
+            # Generate flashcards using mock service
+            # (replace with real API in production)
             flashcards = self._generate_flashcards_mock(command.input_text)
 
             # Calculate response time
@@ -118,7 +126,9 @@ class FlashcardGenerationService:
             session.save(update_fields=["generated_count", "api_response_time_ms"])
 
             self.logger.info(
-                f"Successfully generated {len(valid_flashcards)} flashcards for user {command.user.id}",
+                "Successfully generated %d flashcards for user %s",
+                len(valid_flashcards),
+                command.user.id,
                 extra={
                     "user_id": command.user.id,
                     "session_id": session.id,
@@ -140,8 +150,10 @@ class FlashcardGenerationService:
             error_code = "ai_generation_failed"
             error_message = "Couldn't generate flashcards right now. Please try again."
 
-            self.logger.error(
-                f"AI generation failed for user {command.user.id}: {error_code}",
+            self.logger.exception(
+                "AI generation failed for user %s: %s",
+                command.user.id,
+                error_code,
                 extra={
                     "user_id": command.user.id,
                     "input_text_preview": command.input_text[:100],
@@ -149,7 +161,6 @@ class FlashcardGenerationService:
                     "error_code": error_code,
                     "exception": str(e),
                 },
-                exc_info=True,
             )
 
             # Update session with error details for analytics
@@ -173,17 +184,20 @@ class FlashcardGenerationService:
         this will be replaced with actual API calls.
 
         Args:
-            input_text: The input text (not used in mock, but included for API compatibility)
+            input_text: The input text (not used in mock, but included
+                for API compatibility)
 
         Returns:
             List of flashcard dictionaries with 'front' and 'back' keys
         """
-        mock_error = random.choice([True, False])
+        # S311: random is acceptable here for mock/testing purposes
+        mock_error = random.choice([True, False])  # noqa: S311
         if mock_error:
-            raise GenerateFlashcardsError("OpenRouter API error occurred (mocked)")
+            msg = "OpenRouter API error occurred (mocked)"
+            raise GenerateFlashcardsError(msg)
 
         # Simulate API latency (500-2000ms)
-        time.sleep(random.uniform(0.5, 2.0))
+        time.sleep(random.uniform(0.5, 2.0))  # noqa: S311
 
         # Return 5-7 hardcoded educational flashcards
         mock_flashcards = [
@@ -193,32 +207,55 @@ class FlashcardGenerationService:
             },
             {
                 "front": "When did World War II end?",
-                "back": "World War II ended in 1945 with the surrender of Germany in May and Japan in September.",
+                "back": (
+                    "World War II ended in 1945 with the surrender of "
+                    "Germany in May and Japan in September."
+                ),
             },
             {
                 "front": "What is photosynthesis?",
-                "back": "Photosynthesis is the process by which plants use sunlight, water, and carbon dioxide to produce oxygen and energy in the form of sugar.",
+                "back": (
+                    "Photosynthesis is the process by which plants use "
+                    "sunlight, water, and carbon dioxide to produce oxygen "
+                    "and energy in the form of sugar."
+                ),
             },
             {
                 "front": "Who wrote 'Romeo and Juliet'?",
-                "back": "William Shakespeare wrote the tragic play 'Romeo and Juliet' in the early 1590s.",
+                "back": (
+                    "William Shakespeare wrote the tragic play 'Romeo and "
+                    "Juliet' in the early 1590s."
+                ),
             },
             {
                 "front": "What is the speed of light?",
-                "back": "The speed of light in a vacuum is approximately 299,792,458 meters per second (or about 186,282 miles per second).",
+                "back": (
+                    "The speed of light in a vacuum is approximately "
+                    "299,792,458 meters per second (or about 186,282 "
+                    "miles per second)."
+                ),
             },
             {
                 "front": "What is the Pythagorean theorem?",
-                "back": "The Pythagorean theorem states that in a right triangle, the square of the hypotenuse equals the sum of squares of the other two sides: a² + b² = c².",
+                "back": (
+                    "The Pythagorean theorem states that in a right triangle, "
+                    "the square of the hypotenuse equals the sum of squares "
+                    "of the other two sides: a² + b² = c²."
+                ),
             },
             {
                 "front": "What is DNA?",
-                "back": "DNA (deoxyribonucleic acid) is a molecule that contains the genetic instructions for the development, functioning, growth, and reproduction of all living organisms.",
+                "back": (
+                    "DNA (deoxyribonucleic acid) is a molecule that contains "
+                    "the genetic instructions for the development, "
+                    "functioning, growth, and reproduction of all living "
+                    "organisms."
+                ),
             },
         ]
 
         # Return random 5-7 flashcards
-        num_cards = random.randint(5, 7)
+        num_cards = random.randint(5, 7)  # noqa: S311
         return random.sample(mock_flashcards, num_cards)
 
     def _validate_flashcards(
@@ -229,8 +266,8 @@ class FlashcardGenerationService:
         """Validate generated flashcards against model constraints.
 
         Filters out flashcards that don't meet the required constraints:
-        - front: non-empty, max 200 characters
-        - back: non-empty, max 500 characters
+        - front: non-empty, max MAX_FRONT_LENGTH characters
+        - back: non-empty, max MAX_BACK_LENGTH characters
 
         Args:
             flashcards: List of flashcard dictionaries to validate
@@ -245,7 +282,9 @@ class FlashcardGenerationService:
             # Check for required keys
             if "front" not in card or "back" not in card:
                 self.logger.warning(
-                    f"Flashcard {idx} missing required keys (session: {session_id})",
+                    "Flashcard %d missing required keys (session: %s)",
+                    idx,
+                    session_id,
                 )
                 continue
 
@@ -253,18 +292,22 @@ class FlashcardGenerationService:
             back = card["back"].strip()
 
             # Validate front field
-            if not front or len(front) > 200:
+            if not front or len(front) > MAX_FRONT_LENGTH:
                 self.logger.warning(
-                    f"Flashcard {idx} has invalid front field (session: {session_id}): "
-                    f"length={len(front)}",
+                    "Flashcard %d has invalid front field (session: %s): length=%d",
+                    idx,
+                    session_id,
+                    len(front),
                 )
                 continue
 
             # Validate back field
-            if not back or len(back) > 500:
+            if not back or len(back) > MAX_BACK_LENGTH:
                 self.logger.warning(
-                    f"Flashcard {idx} has invalid back field (session: {session_id}): "
-                    f"length={len(back)}",
+                    "Flashcard %d has invalid back field (session: %s): length=%d",
+                    idx,
+                    session_id,
+                    len(back),
                 )
                 continue
 
