@@ -11,7 +11,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Backend: Django 5.2 / Django REST Framework 3.16
 - Frontend: HTMX + Bootstrap (minimal JavaScript)
 - Database: PostgreSQL 17
-- AI: OpenRouter API for LLM-powered flashcard generation
+- AI: Gemini API for LLM-powered flashcard generation
 - Package Management: uv
 - Containerization: Podman/Docker
 

@@ -2,7 +2,7 @@
 
 This service handles the business logic for generating flashcards from user input text.
 For the MVP, it uses a mock AI service that returns hardcoded flashcards.
-In production, this will integrate with OpenRouter API.
+In production, this will integrate with an LLM API.
 """
 
 import logging
@@ -180,8 +180,8 @@ class FlashcardGenerationService:
     def _generate_flashcards_mock(self, input_text: str) -> list[dict[str, str]]:
         """Mock AI service that returns hardcoded flashcards.
 
-        This simulates the OpenRouter API for MVP testing. In production,
-        this will be replaced with actual API calls.
+        This simulates the LLM API for MVP testing. In production,
+        this will be replaced with actual LLM API calls.
 
         Args:
             input_text: The input text (not used in mock, but included
@@ -191,13 +191,13 @@ class FlashcardGenerationService:
             List of flashcard dictionaries with 'front' and 'back' keys
         """
         # S311: random is acceptable here for mock/testing purposes
-        mock_error = random.choice([True, False])  # noqa: S311
+        mock_error = random.choice([True, False])
         if mock_error:
-            msg = "OpenRouter API error occurred (mocked)"
+            msg = "LLM API error occurred (mocked)"
             raise GenerateFlashcardsError(msg)
 
         # Simulate API latency (500-2000ms)
-        time.sleep(random.uniform(0.5, 2.0))  # noqa: S311
+        time.sleep(random.uniform(0.5, 2.0))
 
         # Return 5-7 hardcoded educational flashcards
         mock_flashcards = [
@@ -255,7 +255,7 @@ class FlashcardGenerationService:
         ]
 
         # Return random 5-7 flashcards
-        num_cards = random.randint(5, 7)  # noqa: S311
+        num_cards = random.randint(5, 7)
         return random.sample(mock_flashcards, num_cards)
 
     def _validate_flashcards(
