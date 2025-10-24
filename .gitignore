@@ -325,3 +325,4 @@ dump.rdb
 flashcards/media/
 
 .pytest_cache/
+.env
