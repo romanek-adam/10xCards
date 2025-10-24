@@ -62,35 +62,3 @@
     </div>
   </div>
 {% endblock content %}
-{% block modal %}
-  {% include "flashcards/_delete_confirmation_modal.html" %}
-{% endblock modal %}
-{% block inline_javascript %}
-  <script>
-    window.addEventListener('DOMContentLoaded', () => {
-      // Set flashcard ID on modal when delete button clicked
-      const deleteModal = document.getElementById('deleteModal');
-      if (deleteModal) {
-        deleteModal.addEventListener('show.bs.modal', function(event) {
-          const button = event.relatedTarget;
-          const flashcardId = button.getAttribute('data-flashcard-id');
-          const deleteBtn = document.getElementById('confirmDeleteBtn');
-          deleteBtn.setAttribute('hx-delete', `/flashcards/${flashcardId}/delete/`);
-          deleteBtn.setAttribute('hx-target', '#flashcard-list-container');
-          deleteBtn.setAttribute('hx-swap', 'innerHTML');
-          htmx.process(deleteBtn);
-        });
-      }
-
-      // Close modal after successful delete
-      document.body.addEventListener('htmx:afterRequest', function(event) {
-        if (event.detail.successful && deleteModal) {
-          const modalInstance = bootstrap.Modal.getInstance(deleteModal);
-          if (modalInstance) {
-            modalInstance.hide();
-          }
-        }
-      });
-    });
-  </script>
-{% endblock inline_javascript %}

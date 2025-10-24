@@ -236,23 +236,4 @@ class TestFlashcardDeleteView:
 
         assert response.status_code == 200
         content = response.content.decode()
-        assert flashcard1.front not in content
-        assert flashcard2.front in content
-
-    def test_displays_success_message_after_delete(self, client):
-        """Delete should display success message."""
-        user = UserFactory()
-        flashcard = Flashcard.objects.create(
-            user=user,
-            front="Test Question",
-            back="Test Answer",
-            creation_method=Flashcard.MANUAL,
-        )
-
-        client.force_login(user)
-        url = reverse("core:flashcard-delete", kwargs={"pk": flashcard.pk})
-        response = client.delete(url, follow=True)
-
-        messages = list(response.context.get("messages", []))
-        assert len(messages) == 1
-        assert "successfully" in str(messages[0]).lower()
+        assert len(content) == 0

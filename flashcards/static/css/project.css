@@ -22,3 +22,9 @@
 .htmx-request.htmx-indicator {
   display: block;
 }
+
+/* HTMX Delete Animation */
+.htmx-swapping.list-group-item {
+  opacity: 0;
+  transition: opacity 1s ease-out;
+}
