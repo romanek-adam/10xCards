@@ -1,0 +1,12 @@
+{% load static i18n %}
+
+<div class="text-center py-5">
+  <p class="text-muted fs-5 mb-3">{% translate "You don't have any flashcards yet." %}</p>
+  <p class="text-muted mb-4">
+    {% translate "Get started by generating flashcards from your study materials or creating one manually." %}
+  </p>
+  <div class="btn-group" role="group" aria-label="Create flashcard actions">
+    <a href="{% url 'core:flashcard-list' %}" class="btn btn-success">{% translate "Generate Flashcards" %}</a>
+    <a href="{% url 'core:flashcard-list' %}" class="btn btn-primary">{% translate "Create Flashcard" %}</a>
+  </div>
+</div>

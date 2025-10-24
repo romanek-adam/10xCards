@@ -11,3 +11,14 @@
   background-color: #f2dede;
   border-color: #eed3d7;
 }
+
+/* HTMX Loading Indicator */
+.htmx-indicator {
+  display: none;
+  z-index: 9999;
+}
+
+.htmx-request .htmx-indicator,
+.htmx-request.htmx-indicator {
+  display: block;
+}

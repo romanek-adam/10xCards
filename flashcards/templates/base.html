@@ -68,6 +68,9 @@
                 </li>
                 {% if request.user.is_authenticated %}
                   <li class="nav-item">
+                    <a class="nav-link" href="{% url 'core:flashcard-list' %}">{% translate "My Flashcards" %}</a>
+                  </li>
+                  <li class="nav-item">
                     <a class="nav-link" href="{% url 'users:detail' request.user.pk %}">{% translate "My Profile" %}</a>
                   </li>
                   <li class="nav-item">

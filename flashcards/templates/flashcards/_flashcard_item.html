@@ -1,0 +1,18 @@
+{% load static i18n %}
+
+<li class="list-group-item">
+  <div class="d-flex justify-content-between align-items-center">
+    <span class="flashcard-front">{{ flashcard.front|truncatechars:100 }}</span>
+    <div class="btn-group" role="group" aria-label="Flashcard actions">
+      <a href="{% url 'core:flashcard-list' %}"
+         class="btn btn-sm btn-outline-primary"
+         aria-label="Edit flashcard">{% translate "Edit" %}</a>
+      <button type="button"
+              class="btn btn-sm btn-outline-danger"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteModal"
+              data-flashcard-id="{{ flashcard.id }}"
+              aria-label="Delete flashcard">{% translate "Delete" %}</button>
+    </div>
+  </div>
+</li>

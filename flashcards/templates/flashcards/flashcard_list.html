@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% load static i18n %}
+
+{% block title %}
+  My Flashcards - 10xCards
+{% endblock title %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-12">
+        <!-- Page Header with Title and Count Badge -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <h1>
+            {% translate "My Flashcards" %}
+            {% if total_count > 0 %}<span class="badge bg-primary">{{ total_count }}</span>{% endif %}
+          </h1>
+        </div>
+        <!-- CTA Button Group -->
+        <div class="btn-group mb-4" role="group" aria-label="Flashcard actions">
+          <a href="{% url 'core:flashcard-list' %}" class="btn btn-success">{% translate "Generate Flashcards" %}</a>
+          <a href="{% url 'core:flashcard-list' %}" class="btn btn-primary">{% translate "Create Flashcard" %}</a>
+        </div>
+        <!-- Alert Messages Container -->
+        <div id="alert-container">
+          {% if messages %}
+            {% for message in messages %}
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show"
+                   role="alert">
+                {{ message }}
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        </div>
+        <!-- Flashcard List Container (HTMX swap target) -->
+        <div id="flashcard-list-container">
+          {% if has_flashcards %}
+            {% include "flashcards/_flashcard_list_items.html" %}
+          {% else %}
+            {% include "flashcards/_empty_state.html" %}
+          {% endif %}
+        </div>
+        <!-- Pagination -->
+        {% if is_paginated %}
+          {% include "flashcards/_pagination.html" %}
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  <!-- Loading Indicator -->
+  <div id="loading-indicator"
+       class="htmx-indicator position-fixed top-50 start-50 translate-middle">
+    <div class="spinner-border text-primary"
+         role="status"
+         style="width: 3rem;
+                height: 3rem">
+      <span class="visually-hidden">{% translate "Loading..." %}</span>
+    </div>
+  </div>
+{% endblock content %}
+{% block modal %}
+  {% include "flashcards/_delete_confirmation_modal.html" %}
+{% endblock modal %}
+{% block inline_javascript %}
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      // Set flashcard ID on modal when delete button clicked
+      const deleteModal = document.getElementById('deleteModal');
+      if (deleteModal) {
+        deleteModal.addEventListener('show.bs.modal', function(event) {
+          const button = event.relatedTarget;
+          const flashcardId = button.getAttribute('data-flashcard-id');
+          const deleteBtn = document.getElementById('confirmDeleteBtn');
+          deleteBtn.setAttribute('hx-delete', `/flashcards/${flashcardId}/delete/`);
+          deleteBtn.setAttribute('hx-target', '#flashcard-list-container');
+          deleteBtn.setAttribute('hx-swap', 'innerHTML');
+          htmx.process(deleteBtn);
+        });
+      }
+
+      // Close modal after successful delete
+      document.body.addEventListener('htmx:afterRequest', function(event) {
+        if (event.detail.successful && deleteModal) {
+          const modalInstance = bootstrap.Modal.getInstance(deleteModal);
+          if (modalInstance) {
+            modalInstance.hide();
+          }
+        }
+      });
+    });
+  </script>
+{% endblock inline_javascript %}

@@ -1,0 +1,56 @@
+{% load static i18n %}
+
+{% if is_paginated %}
+  <nav aria-label="Flashcard pagination" class="mt-4">
+    <ul class="pagination justify-content-center">
+      <!-- Previous Button -->
+      <li class="page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+        {% if page_obj.has_previous %}
+          <a class="page-link"
+             href="{% url 'core:flashcard-list' %}?page={{ page_obj.previous_page_number }}&page_size={{ page_size }}"
+             hx-get="{% url 'core:flashcard-list' %}?page={{ page_obj.previous_page_number }}&page_size={{ page_size }}"
+             hx-target="#flashcard-list-container"
+             hx-swap="innerHTML"
+             hx-push-url="true"
+             hx-indicator="#loading-indicator"
+             aria-label="Previous page">&laquo; {% translate "Previous" %}</a>
+        {% else %}
+          <span class="page-link" aria-label="Previous page (disabled)">&laquo; {% translate "Previous" %}</span>
+        {% endif %}
+      </li>
+      <!-- Page Numbers -->
+      {% for page_num in paginator.page_range %}
+        {% if page_num == page_obj.number %}
+          <li class="page-item active" aria-current="page">
+            <span class="page-link">{{ page_num }}</span>
+          </li>
+        {% elif page_num > page_obj.number|add:'-3' and page_num < page_obj.number|add:'3' %}
+          <li class="page-item">
+            <a class="page-link"
+               href="{% url 'core:flashcard-list' %}?page={{ page_num }}&page_size={{ page_size }}"
+               hx-get="{% url 'core:flashcard-list' %}?page={{ page_num }}&page_size={{ page_size }}"
+               hx-target="#flashcard-list-container"
+               hx-swap="innerHTML"
+               hx-push-url="true"
+               hx-indicator="#loading-indicator">{{ page_num }}</a>
+          </li>
+        {% endif %}
+      {% endfor %}
+      <!-- Next Button -->
+      <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+        {% if page_obj.has_next %}
+          <a class="page-link"
+             href="{% url 'core:flashcard-list' %}?page={{ page_obj.next_page_number }}&page_size={{ page_size }}"
+             hx-get="{% url 'core:flashcard-list' %}?page={{ page_obj.next_page_number }}&page_size={{ page_size }}"
+             hx-target="#flashcard-list-container"
+             hx-swap="innerHTML"
+             hx-push-url="true"
+             hx-indicator="#loading-indicator"
+             aria-label="Next page">{% translate "Next" %} &raquo;</a>
+        {% else %}
+          <span class="page-link" aria-label="Next page (disabled)">{% translate "Next" %} &raquo;</span>
+        {% endif %}
+      </li>
+    </ul>
+  </nav>
+{% endif %}

@@ -1,6 +1,6 @@
 Frontend:
 - HTMX
-- Bootstrap
+- Bootstrap 5
 - minimal JavaScript
 
 Backend:

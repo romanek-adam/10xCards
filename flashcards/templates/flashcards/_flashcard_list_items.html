@@ -1,0 +1,10 @@
+{% load static i18n %}
+
+<ul class="list-group">
+  {% for flashcard in flashcards %}
+    {% include "flashcards/_flashcard_item.html" with flashcard=flashcard %}
+  {% endfor %}
+</ul>
+{% if is_paginated %}
+  {% include "flashcards/_pagination.html" %}
+{% endif %}
