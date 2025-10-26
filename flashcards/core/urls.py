@@ -12,6 +12,7 @@ from flashcards.core.views import FlashcardDeleteView
 from flashcards.core.views import FlashcardListView
 from flashcards.core.views import GenerateFlashcardsInputView
 from flashcards.core.views import GenerateFlashcardsReviewView
+from flashcards.core.views import RejectFlashcardView
 
 app_name = "core"
 
@@ -37,6 +38,11 @@ urlpatterns = [
         "flashcards/generate/review/<int:session_id>/accept/",
         AcceptFlashcardView.as_view(),
         name="generate-accept",
+    ),
+    path(
+        "flashcards/generate/review/<int:session_id>/reject/",
+        RejectFlashcardView.as_view(),
+        name="generate-reject",
     ),
     # API endpoints
     path("api/flashcards/", FlashcardAPIListView.as_view(), name="api-flashcard-list"),

@@ -76,10 +76,24 @@
                         </span>
                         {% translate "Accept" %}
                       </button>
-                      <button type="button"
-                              class="btn btn-danger flex-fill reject-btn"
-                              onclick="rejectFlashcard({{ flashcard.id }})">{% translate "Reject" %}</button>
                     </div>
+                  </form>
+                  <!-- Reject Form -->
+                  <form class="mt-2"
+                        hx-post="{% url 'core:generate-reject' session_id=session.id %}"
+                        hx-target="#flashcard-{{ flashcard.id }}"
+                        hx-swap="outerHTML"
+                        hx-indicator="#reject-indicator-{{ flashcard.id }}">
+                    {% csrf_token %}
+                    <input type="hidden" name="flashcard_id" value="{{ flashcard.id }}" />
+                    <button type="submit" class="btn btn-danger w-100 reject-btn">
+                      <span id="reject-indicator-{{ flashcard.id }}"
+                            class="htmx-indicator spinner-border spinner-border-sm me-2"
+                            role="status">
+                        <span class="visually-hidden">{% translate "Loading..." %}</span>
+                      </span>
+                      {% translate "Reject" %}
+                    </button>
                   </form>
                 </div>
               </div>
@@ -115,24 +129,13 @@
           }
         });
       });
-    });
 
-    // Reject flashcard (client-side only)
-    function rejectFlashcard(flashcardId) {
-      const card = document.getElementById(`flashcard-${flashcardId}`);
-      if (card) {
-        // Add fade-out animation
-        card.style.transition = 'opacity 300ms ease-out';
-        card.style.opacity = '0';
-
-        // Remove from DOM after animation
-        setTimeout(() => {
-          card.remove();
-
-          // Check if all cards have been reviewed
-          const remainingCards = document.querySelectorAll('.flashcard-review-card');
-          if (remainingCards.length === 0) {
-            const reviewList = document.getElementById('flashcard-review-list');
+      // Check if all cards have been reviewed after HTMX swap
+      document.body.addEventListener('htmx:afterSwap', function(event) {
+        const remainingCards = document.querySelectorAll('.flashcard-review-card');
+        if (remainingCards.length === 0) {
+          const reviewList = document.getElementById('flashcard-review-list');
+          if (reviewList) {
             reviewList.innerHTML = `
               <div class="alert alert-info">
                 <p class="mb-0">
@@ -141,8 +144,8 @@
               </div>
             `;
           }
-        }, 300);
-      }
-    }
+        }
+      });
+    });
   </script>
 {% endblock javascript %}
