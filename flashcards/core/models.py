@@ -9,6 +9,12 @@ from django.conf import settings
 from django.core.validators import MaxLengthValidator
 from django.core.validators import MinLengthValidator
 from django.db import models
+from django.db.models import Q
+
+
+class FlashcardQuerySet(models.QuerySet):
+    def ready(self):
+        return self.filter(Q(creation_method="manual") | Q(ai_review_state="accepted"))
 
 
 class FlashcardManager(models.Manager):
@@ -18,9 +24,12 @@ class FlashcardManager(models.Manager):
     access their own flashcards.
     """
 
+    def get_queryset(self):
+        return FlashcardQuerySet(self.model, using=self._db)
+
     def for_user(self, user):
         """Return flashcards for a specific user."""
-        return self.filter(user=user)
+        return self.get_queryset().filter(user=user)
 
 
 class Flashcard(models.Model):
@@ -36,9 +45,20 @@ class Flashcard(models.Model):
     MANUAL = "manual"
 
     CREATION_METHOD_CHOICES = [
-        (AI_FULL, "AI Generated (Accepted without edits)"),
-        (AI_EDITED, "AI Generated (Edited before accepting)"),
+        (AI_FULL, "AI Generated"),
+        (AI_EDITED, "AI Generated (Edited)"),
         (MANUAL, "Manually Created"),
+    ]
+
+    # AI generated flashcard review state
+    PENDING = "pending"
+    ACCEPTED = "accepted"
+    REJECTED = "rejected"
+
+    AI_GENERATED_FLASHCARD_REVIEW_STATE = [
+        (PENDING, "Pending"),
+        (ACCEPTED, "Accepted"),
+        (REJECTED, "Rejected"),
     ]
 
     # Fields
@@ -74,6 +94,12 @@ class Flashcard(models.Model):
         blank=True,
         related_name="accepted_flashcards",
         help_text="AI generation session that created this card (if applicable)",
+    )
+
+    ai_review_state = models.CharField(
+        choices=AI_GENERATED_FLASHCARD_REVIEW_STATE,
+        blank=True,
+        help_text="What this AI-generated flashcard review state is (empty for non-AI-generated flashcards)",
     )
 
     created_at = models.DateTimeField(
