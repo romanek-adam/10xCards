@@ -180,6 +180,7 @@ dependencies = [
     "django-model-utils==5.0.0",
     "django-redis==6.0.0",
     "djangorestframework>=3.16.1",
+    "google-genai>=1.46.0",
     "gunicorn==23.0.0",
     "hiredis==3.2.1",
     "markdown>=3.9",

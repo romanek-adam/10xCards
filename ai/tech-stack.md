@@ -11,7 +11,7 @@ Database:
 - Postgres 17
 
 AI
-- communication with LLMs through Openrouter.ai:
+- communication with LLM through Gemini API
 
 CI/CD & Hosting:
 - Github Actions for CI/CD

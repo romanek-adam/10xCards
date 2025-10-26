@@ -1,4 +1,4 @@
-# ruff: noqa: ERA001, E501
+# ruff: noqa: ERA001
 """Base settings to build other settings files upon."""
 
 from pathlib import Path
@@ -306,3 +306,6 @@ REST_FRAMEWORK = {
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+# LLM / AI Configuration
+# ------------------------------------------------------------------------------
+GEMINI_API_KEY = env("GEMINI_API_KEY", default="")

@@ -1,29 +1,72 @@
 """Flashcard generation service for AI-powered flashcard creation.
 
-This service handles the business logic for generating flashcards from user input text.
-For the MVP, it uses a mock AI service that returns hardcoded flashcards.
-In production, this will integrate with an LLM API.
+This service handles the business logic for generating flashcards from user input text
+using Google's Gemini API via the GeminiLLMService.
 """
 
 import logging
-import random
 import time
 from dataclasses import dataclass
+from typing import TYPE_CHECKING
 
 from django.contrib.auth import get_user_model
+from pydantic import BaseModel
+from pydantic import Field
 
 from flashcards.core.models import AIGenerationSession
+from flashcards.core.services.llm_service import GeminiLLMService
 
-User = get_user_model()
+if TYPE_CHECKING:
+    from flashcards.users.models import User
+else:
+    User = get_user_model()
+
 logger = logging.getLogger(__name__)
 
 # Validation constants for flashcard fields
 MAX_FRONT_LENGTH = 200
 MAX_BACK_LENGTH = 500
 
+# System instruction for LLM flashcard generation
+FLASHCARD_GENERATION_SYSTEM_INSTRUCTION = """You are an expert educational content creator specializing in creating effective flashcards for learning.
+
+Your task is to analyze the provided text and generate 5-10 high-quality flashcards that help students learn the key concepts.
+
+Guidelines:
+- Create clear, concise questions that test understanding of important concepts
+- Provide complete, accurate answers with sufficient context
+- Focus on fundamental concepts, definitions, facts, and relationships
+- Avoid overly complex or ambiguous questions
+- Each flashcard should be self-contained and understandable
+- Use simple, direct language appropriate for the subject matter
+- Ensure questions have definitive, factual answers"""
+
 
 class GenerateFlashcardsError(Exception):
     pass
+
+
+class FlashcardSchema(BaseModel):
+    """Schema for a single flashcard returned by the LLM."""
+
+    front: str = Field(
+        description="The question or prompt on the front of the flashcard",
+        max_length=MAX_FRONT_LENGTH,
+    )
+    back: str = Field(
+        description="The answer or explanation on the back of the flashcard",
+        max_length=MAX_BACK_LENGTH,
+    )
+
+
+class FlashcardGenerationResponse(BaseModel):
+    """Schema for the complete flashcard generation response from LLM."""
+
+    flashcards: list[FlashcardSchema] = Field(
+        description="List of generated flashcards (5-10 cards)",
+        min_length=5,
+        max_length=10,
+    )
 
 
 @dataclass
@@ -33,12 +76,12 @@ class GenerateFlashcardsCommand:
     Attributes:
         user: The authenticated user making the request
         input_text: The text from which to generate flashcards
-        model_name: The AI model to use for generation (default: "mock_model")
+        model_name: The AI model to use for generation (default: "gemini-2.0-flash-001")
     """
 
     user: User
     input_text: str
-    model_name: str = "mock_model"
+    model_name: str = "gemini-2.0-flash-001"
 
 
 @dataclass
@@ -74,9 +117,15 @@ class FlashcardGenerationService:
     Flashcard model (users accept/reject proposals in a separate flow).
     """
 
-    def __init__(self) -> None:
-        """Initialize the flashcard generation service."""
+    def __init__(self, llm_service: GeminiLLMService | None = None) -> None:
+        """Initialize the flashcard generation service.
+
+        Args:
+            llm_service: Optional GeminiLLMService instance. If None, creates a new
+                instance with default settings.
+        """
         self.logger = logger
+        self._llm_service = llm_service
 
     def generate_flashcards(
         self,
@@ -110,9 +159,11 @@ class FlashcardGenerationService:
             # Track API response time
             start_time = time.time()
 
-            # Generate flashcards using mock service
-            # (replace with real API in production)
-            flashcards = self._generate_flashcards_mock(command.input_text)
+            # Generate flashcards using Gemini LLM
+            flashcards = self._generate_flashcards_with_llm(
+                command.input_text,
+                command.model_name,
+            )
 
             # Calculate response time
             response_time_ms = int((time.time() - start_time) * 1000)
@@ -177,86 +228,62 @@ class FlashcardGenerationService:
                 error_message=error_message,
             )
 
-    def _generate_flashcards_mock(self, input_text: str) -> list[dict[str, str]]:
-        """Mock AI service that returns hardcoded flashcards.
-
-        This simulates the LLM API for MVP testing. In production,
-        this will be replaced with actual LLM API calls.
+    def _generate_flashcards_with_llm(
+        self,
+        input_text: str,
+        model_name: str,
+    ) -> list[dict[str, str]]:
+        """Generate flashcards using Gemini LLM API.
 
         Args:
-            input_text: The input text (not used in mock, but included
-                for API compatibility)
+            input_text: The text from which to generate flashcards
+            model_name: The Gemini model to use for generation
 
         Returns:
             List of flashcard dictionaries with 'front' and 'back' keys
+
+        Raises:
+            GenerateFlashcardsError: If LLM generation fails
         """
-        # S311: random is acceptable here for mock/testing purposes
-        mock_error = random.choice([True, False])
-        if mock_error:
-            msg = "LLM API error occurred (mocked)"
-            raise GenerateFlashcardsError(msg)
+        # Initialize LLM service if not provided in constructor
+        if self._llm_service is None:
+            self._llm_service = GeminiLLMService(
+                model=model_name,
+                system_instruction=FLASHCARD_GENERATION_SYSTEM_INSTRUCTION,
+                temperature=0.7,
+                max_output_tokens=2048,
+            )
 
-        # Simulate API latency (500-2000ms)
-        time.sleep(random.uniform(0.5, 2.0))
+        # Create prompt for flashcard generation
+        prompt = f"""Generate educational flashcards from the following text:
 
-        # Return 5-7 hardcoded educational flashcards
-        mock_flashcards = [
-            {
-                "front": "What is the capital of France?",
-                "back": "Paris is the capital and largest city of France.",
-            },
-            {
-                "front": "When did World War II end?",
-                "back": (
-                    "World War II ended in 1945 with the surrender of "
-                    "Germany in May and Japan in September."
-                ),
-            },
-            {
-                "front": "What is photosynthesis?",
-                "back": (
-                    "Photosynthesis is the process by which plants use "
-                    "sunlight, water, and carbon dioxide to produce oxygen "
-                    "and energy in the form of sugar."
-                ),
-            },
-            {
-                "front": "Who wrote 'Romeo and Juliet'?",
-                "back": (
-                    "William Shakespeare wrote the tragic play 'Romeo and "
-                    "Juliet' in the early 1590s."
-                ),
-            },
-            {
-                "front": "What is the speed of light?",
-                "back": (
-                    "The speed of light in a vacuum is approximately "
-                    "299,792,458 meters per second (or about 186,282 "
-                    "miles per second)."
-                ),
-            },
-            {
-                "front": "What is the Pythagorean theorem?",
-                "back": (
-                    "The Pythagorean theorem states that in a right triangle, "
-                    "the square of the hypotenuse equals the sum of squares "
-                    "of the other two sides: a² + b² = c²."
-                ),
-            },
-            {
-                "front": "What is DNA?",
-                "back": (
-                    "DNA (deoxyribonucleic acid) is a molecule that contains "
-                    "the genetic instructions for the development, "
-                    "functioning, growth, and reproduction of all living "
-                    "organisms."
-                ),
-            },
-        ]
+{input_text}
 
-        # Return random 5-7 flashcards
-        num_cards = random.randint(5, 7)
-        return random.sample(mock_flashcards, num_cards)
+Create 5-10 flashcards that cover the most important concepts, facts, and ideas from this text."""
+
+        try:
+            # Call LLM with structured output
+            response = self._llm_service.generate_structured(
+                prompt=prompt,
+                response_schema=FlashcardGenerationResponse,
+            )
+
+            # Convert Pydantic models to dictionaries
+            flashcards = [
+                {"front": card.front, "back": card.back} for card in response.flashcards
+            ]
+
+            self.logger.info(
+                "LLM generated %d flashcards from input_text_length=%d",
+                len(flashcards),
+                len(input_text),
+            )
+        except Exception as e:
+            self.logger.exception("LLM flashcard generation failed")
+            msg = f"Failed to generate flashcards with LLM: {e}"
+            raise GenerateFlashcardsError(msg) from e
+        else:
+            return flashcards
 
     def _validate_flashcards(
         self,
