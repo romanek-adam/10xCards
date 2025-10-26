@@ -2,5 +2,14 @@
 
 from .flashcard_delete import FlashcardDeleteView
 from .flashcard_list import FlashcardListView
+from .generate_accept import AcceptFlashcardView
+from .generate_input import GenerateFlashcardsInputView
+from .generate_review import GenerateFlashcardsReviewView
 
-__all__ = ["FlashcardDeleteView", "FlashcardListView"]
+__all__ = [
+    "AcceptFlashcardView",
+    "FlashcardDeleteView",
+    "FlashcardListView",
+    "GenerateFlashcardsInputView",
+    "GenerateFlashcardsReviewView",
+]

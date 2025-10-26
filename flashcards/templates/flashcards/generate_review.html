@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% load static i18n %}
+
+{% block title %}
+  Review Generated Flashcards - 10xCards
+{% endblock title %}
+{% block content %}
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-lg-8 mx-auto">
+        <!-- Page Header -->
+        <div class="mb-4">
+          <h1>
+            {% translate "Review Generated Flashcards" %}
+            <span class="badge bg-primary">{{ flashcard_count }}</span>
+          </h1>
+          <p class="text-muted">
+            Review each flashcard below. You can edit the text before accepting, or reject cards you don't want.
+          </p>
+        </div>
+        <!-- Alert Container for Accept/Reject Feedback -->
+        <div id="alert-container"></div>
+        <!-- Flashcard Review List -->
+        <div id="flashcard-review-list">
+          {% if flashcard_count > 0 %}
+            {% for flashcard in flashcards %}
+              <div class="card mb-3 flashcard-review-card"
+                   id="flashcard-{{ flashcard.id }}">
+                <div class="card-body">
+                  <!-- Card Number Badge -->
+                  <div class="mb-2">
+                    <span class="badge bg-secondary">Card {{ forloop.counter }} of {{ flashcard_count }}</span>
+                  </div>
+                  <!-- Accept Form -->
+                  <form id="accept-form-{{ flashcard.id }}"
+                        hx-post="{% url 'core:generate-accept' session_id=session.id %}"
+                        hx-target="#flashcard-{{ flashcard.id }}"
+                        hx-swap="outerHTML swap:300ms"
+                        hx-indicator="#accept-indicator-{{ flashcard.id }}">
+                    {% csrf_token %}
+                    <input type="hidden" name="flashcard_id" value="{{ flashcard.id }}" />
+                    <!-- Front (Question) -->
+                    <div class="mb-3">
+                      <label for="front-{{ flashcard.id }}" class="form-label fw-bold">{% translate "Front (Question)" %}</label>
+                      <textarea class="form-control flashcard-front"
+                                id="front-{{ flashcard.id }}"
+                                name="front"
+                                rows="3"
+                                maxlength="200"
+                                data-flashcard-id="{{ flashcard.id }}">{{ flashcard.front }}</textarea>
+                      <div class="form-text">
+                        <span class="char-count">{{ flashcard.front|length }}</span> / 200 characters
+                      </div>
+                    </div>
+                    <!-- Back (Answer) -->
+                    <div class="mb-3">
+                      <label for="back-{{ flashcard.id }}" class="form-label fw-bold">{% translate "Back (Answer)" %}</label>
+                      <textarea class="form-control flashcard-back"
+                                id="back-{{ flashcard.id }}"
+                                name="back"
+                                rows="4"
+                                maxlength="500"
+                                data-flashcard-id="{{ flashcard.id }}">{{ flashcard.back }}</textarea>
+                      <div class="form-text">
+                        <span class="char-count">{{ flashcard.back|length }}</span> / 500 characters
+                      </div>
+                    </div>
+                    <!-- Action Buttons -->
+                    <div class="d-flex gap-2">
+                      <button type="submit" class="btn btn-success flex-fill accept-btn">
+                        <span id="accept-indicator-{{ flashcard.id }}"
+                              class="htmx-indicator spinner-border spinner-border-sm me-2"
+                              role="status">
+                          <span class="visually-hidden">{% translate "Loading..." %}</span>
+                        </span>
+                        {% translate "Accept" %}
+                      </button>
+                      <button type="button"
+                              class="btn btn-danger flex-fill reject-btn"
+                              onclick="rejectFlashcard({{ flashcard.id }})">{% translate "Reject" %}</button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <div class="alert alert-info">
+              <p class="mb-0">
+                All flashcards have been reviewed. <a href="{% url 'core:flashcard-list' %}">Return to My Flashcards</a>
+              </p>
+            </div>
+          {% endif %}
+        </div>
+        <!-- Navigation -->
+        <div class="mt-4">
+          <a href="{% url 'core:flashcard-list' %}" class="btn btn-link">{% translate "← Return to My Flashcards" %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+{% block javascript %}
+  {{ block.super }}
+  <script>
+    // Character counter for textareas
+    document.addEventListener('DOMContentLoaded', function() {
+      const textareas = document.querySelectorAll('.flashcard-front, .flashcard-back');
+
+      textareas.forEach(textarea => {
+        textarea.addEventListener('input', function() {
+          const charCount = this.parentElement.querySelector('.char-count');
+          if (charCount) {
+            charCount.textContent = this.value.length;
+          }
+        });
+      });
+    });
+
+    // Reject flashcard (client-side only)
+    function rejectFlashcard(flashcardId) {
+      const card = document.getElementById(`flashcard-${flashcardId}`);
+      if (card) {
+        // Add fade-out animation
+        card.style.transition = 'opacity 300ms ease-out';
+        card.style.opacity = '0';
+
+        // Remove from DOM after animation
+        setTimeout(() => {
+          card.remove();
+
+          // Check if all cards have been reviewed
+          const remainingCards = document.querySelectorAll('.flashcard-review-card');
+          if (remainingCards.length === 0) {
+            const reviewList = document.getElementById('flashcard-review-list');
+            reviewList.innerHTML = `
+              <div class="alert alert-info">
+                <p class="mb-0">
+                  All flashcards have been reviewed. <a href="{% url 'core:flashcard-list' %}">Return to My Flashcards</a>
+                </p>
+              </div>
+            `;
+          }
+        }, 300);
+      }
+    }
+  </script>
+{% endblock javascript %}

@@ -7,8 +7,11 @@ from django.urls import path
 
 from flashcards.api.views.flashcards import FlashcardListView as FlashcardAPIListView
 from flashcards.api.views.generation import GenerateFlashcardsView
+from flashcards.core.views import AcceptFlashcardView
 from flashcards.core.views import FlashcardDeleteView
 from flashcards.core.views import FlashcardListView
+from flashcards.core.views import GenerateFlashcardsInputView
+from flashcards.core.views import GenerateFlashcardsReviewView
 
 app_name = "core"
 
@@ -19,6 +22,21 @@ urlpatterns = [
         "flashcards/<int:pk>/delete/",
         FlashcardDeleteView.as_view(),
         name="flashcard-delete",
+    ),
+    path(
+        "flashcards/generate/",
+        GenerateFlashcardsInputView.as_view(),
+        name="generate-input",
+    ),
+    path(
+        "flashcards/generate/review/<int:session_id>/",
+        GenerateFlashcardsReviewView.as_view(),
+        name="generate-review",
+    ),
+    path(
+        "flashcards/generate/review/<int:session_id>/accept/",
+        AcceptFlashcardView.as_view(),
+        name="generate-accept",
     ),
     # API endpoints
     path("api/flashcards/", FlashcardAPIListView.as_view(), name="api-flashcard-list"),

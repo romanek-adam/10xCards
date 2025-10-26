@@ -26,7 +26,7 @@ class FlashcardListView(LoginRequiredMixin, ListView):
         Applies application-level row security using the custom manager's
         for_user() method to ensure users can only access their own flashcards.
         """
-        return Flashcard.objects.for_user(self.request.user)
+        return Flashcard.objects.for_user(self.request.user).ready()
 
     def get_paginate_by(self, queryset):
         """Allow page_size override via query param, clamped to 25-50.

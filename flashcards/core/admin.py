@@ -22,6 +22,7 @@ class FlashcardAdmin(admin.ModelAdmin):
         "user_email",
         "creation_method",
         "ai_session_link",
+        "ai_review_state",
         "created_at",
         "updated_at",
     )
@@ -56,6 +57,7 @@ class FlashcardAdmin(admin.ModelAdmin):
                     "user",
                     "creation_method",
                     "ai_session",
+                    "ai_review_state",
                 ),
             },
         ),

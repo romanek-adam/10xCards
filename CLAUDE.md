@@ -173,6 +173,10 @@ The MVP focuses on three core views:
 - Briefly explain why certain approaches are used and link to relevant documentation or learning resources.
 - When suggesting fixes for errors, explain the root cause and how the solution addresses it to build understanding. Ask for confirmation before proceeding.
 - Offer introducing basic test cases that demonstrate how the code works and common edge cases to consider.
+- Always use context7 when I need code generation, setup or configuration steps, or library/API documentation. This means
+  you should automatically use the Context7 MCP tools get library docs without me having to explicitly ask.
+  IMPORTANT: Always confirm the resolved library id with me unless it's one of the projects on the above pre-approved list:
+  - /googleapis/python-genai
 
 
 ### Logging

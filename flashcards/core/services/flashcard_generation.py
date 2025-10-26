@@ -14,6 +14,7 @@ from pydantic import BaseModel
 from pydantic import Field
 
 from flashcards.core.models import AIGenerationSession
+from flashcards.core.models import Flashcard
 from flashcards.core.services.llm_service import GeminiLLMService
 
 if TYPE_CHECKING:
@@ -170,6 +171,17 @@ class FlashcardGenerationService:
 
             # Validate generated flashcards
             valid_flashcards = self._validate_flashcards(flashcards, session.id)
+
+            # Store generated flashcards
+            for flashcard in valid_flashcards:
+                Flashcard.objects.create(
+                    user=command.user,
+                    front=flashcard["front"],
+                    back=flashcard["back"],
+                    creation_method=Flashcard.AI_FULL,
+                    ai_session=session,
+                    ai_review_state=Flashcard.PENDING,
+                )
 
             # Update session with successful generation results
             session.generated_count = len(valid_flashcards)
