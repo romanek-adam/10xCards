@@ -64,7 +64,10 @@ jobs:
           python-version-file: ".python-version"
 
       - name: Install dependencies
-        run: uv sync --locked
+        run: uv lock --check
+
+      - name: Install dependencies
+        run: uv sync --locked --verbose
 
       - name: Check DB Migrations
         run: uv run python manage.py makemigrations --check
